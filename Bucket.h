@@ -8,7 +8,6 @@
 
 #include "CommonMacros.h"
 
-namespace pio {
 
 using namespace std;
 //------------------------------------------------
@@ -71,4 +70,3 @@ class Bucket {
 		//unit milliseconds
 };
 
-} //end of namespace pio
