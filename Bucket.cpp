@@ -1,8 +1,9 @@
 #include <vector>
 #include <iostream>
+#include <sstream>
 
-#include <gtest/gtest.h>
-#include <glog/logging.h>
+//#include <gtest/gtest.h>
+//#include <glog/logging.h>
 
 #include "Bucket.h"
 
@@ -24,7 +25,7 @@ int msb(uint64_t n)
 		shift += 8;
 	}
 	//should not be here
-	log_assert(0);
+	//assert(0);
 	return -1;
 }
 
@@ -43,7 +44,7 @@ bool Bucket::Insert(uint64_t number) {
 bool Bucket::Insert(uint64_t number, int req_cnt, int req_size) {
 
 	if (req_cnt <= 0) {
-		LOG(ERROR) << "request count should be at least 1";
+		cout << "request count should be at least 1" << endl;
 		//log_assert(0);
 		return false;
 	}
@@ -57,13 +58,14 @@ bool Bucket::Insert(uint64_t number, int req_cnt, int req_size) {
 	int max = max_ - 1;
 
 #if 0
-	LOG(ERROR) << "name:" << name_
+	cout << "name:" << name_
 		<< " req_cnt:" << req_cnt
 		<< " req_cnt_:" << req_cnt_
 		<< " latency:" << number
 		<< " index: " << latency_index
 		<< " req_size:" << req_size
-		<< " req_size_:" << req_size_;
+		<< " req_size_:" << req_size_
+		<< endl;
 #endif
 	if (latency_index > max) {
 		bucket_[max][req_cnt]++;
@@ -81,7 +83,7 @@ bool Bucket::Insert(uint64_t number, int req_cnt, int req_size) {
 
 void Bucket::SetLogFrequencyWithReqCount(uint64_t req_cnt) {
 	log_frequency_ = req_cnt;
-	LOG(ERROR) << "New log frequency is " << log_frequency_;
+	cout << "New log frequency is " << log_frequency_ << endl;
 
 }
 
@@ -113,7 +115,7 @@ bool Bucket::Dump() {
 			<< ",io count:" << req_cnt_
 			<< ",io size:" << req_size_ ;
 
-	LOG(ERROR) << header.str();
+	cout << header.str() << endl;
 
 	uint32_t lat_index=0;
 
@@ -136,8 +138,24 @@ bool Bucket::Dump() {
 		} else {
 			lat_index *= multiplication_factor_;
 		}
-		should_log && LOG(ERROR) << batch_stream.str();
+		should_log && cout << batch_stream.str() << endl;
 	}
 	return true;
 }
 
+int main() {
+
+	Bucket bk("basic_test", 0, 12, 2);
+	int j=1;
+	for (int i=1; i<=20; i++) {
+		bk.Insert(0);
+		//bk.Insert(j-2);
+		bk.Insert(j);
+		bk.Insert(j+4);
+		j=j*2;
+	}
+	auto ret = bk.Dump();
+
+
+	return 0;
+}
