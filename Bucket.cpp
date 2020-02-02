@@ -67,6 +67,11 @@ bool Bucket::Insert(uint64_t number, int req_cnt, int req_size) {
 		<< " req_size_:" << req_size_
 		<< endl;
 #endif
+
+	if (req_cnt > max_batch_size_) {
+		req_cnt = max_batch_size_;
+	}
+
 	if (latency_index > max) {
 		bucket_[max][req_cnt]++;
 	} else {
@@ -115,8 +120,6 @@ bool Bucket::Dump() {
 			<< ",io count:" << req_cnt_
 			<< ",io size:" << req_size_ ;
 
-	cout << header.str() << endl;
-
 	uint32_t lat_index=0;
 
 	for (auto latency_elem : bucket_) {
@@ -138,7 +141,7 @@ bool Bucket::Dump() {
 		} else {
 			lat_index *= multiplication_factor_;
 		}
-		should_log && cout << batch_stream.str() << endl;
+		should_log && cout << header.str() << " " << batch_stream.str() << endl;
 	}
 	return true;
 }
